@@ -16,9 +16,6 @@
 import subprocess
 import optparse
 
-# more secure way (although ifconfig is deprecated, change to use ip command later)
-# this way if someone tries to hijack, commands will only be executed as if part of ifconfig command
-
 def change_mac(interface,desiredMAC):
 	print("[+] Changing MAC address for " + interface + " to " + desiredMAC)
 
@@ -33,21 +30,7 @@ parser = optparse.OptionParser()
 
 parser.add_option("-i", "--interface" , dest="interface", help="Interface having MAC changed")
 parser.add_option("-m", "--mac", dest="desiredMAC", help="Desired MAC address")
-# python3 mac_changer.py -h
-# python3 mac_changer.py --help -> both options will bring up a help menu
 
 (options, arguments) = parser.parse_args() 
-
-#for raw user input (command line prompt)
-#interface = input("Interface = ")
-#desiredMAC = input("New MAC address = ") 	
-
-# this way can be hijacked because user can input anything for interface/desiredMAC
-# example: eth0;ls;
-# would allow the user to input any linux commands they want into the shell
-
-#subprocess.call('sudo ifconfig ' + interface + ' down', shell = True)
-#subprocess.call('sudo ifconfig ' + interface + ' hw ether ' + desiredMAC, shell = True)
-#subprocess.call('sudo ifconfig ' + interface + ' up', shell = True)
 
 change_mac(options.interface, options.desiredMAC)
