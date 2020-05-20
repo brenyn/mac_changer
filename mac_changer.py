@@ -15,6 +15,7 @@
 
 import subprocess
 import optparse
+import re
 
 def get_arguments():
 	parser = optparse.OptionParser()
@@ -46,4 +47,11 @@ options = get_arguments()
 change_mac(options.interface, options.desiredMAC)
 
 ifconfig_result = subprocess.check_output(["sudo", "ifconfig", options.interface])
-print(ifconfig_result)
+
+mac_search_result = re.search(r"\w\w:\w\w:\w\w:\w\w:\w\w:\w\w", ifconfig_result)
+
+if (mac_search_result.group(0) == options.desiredMAC):
+	print ("[+] MAC address for " + options.interface + " successfully changed to: " + mac_search_result.group(0))
+
+else:
+	print ("[-] Could not change MAC address")
