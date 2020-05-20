@@ -16,22 +16,31 @@
 import subprocess
 import optparse
 
+# more secure way (although ifconfig is deprecated, change to use ip command later)
+# this way if someone tries to hijack, commands will only be executed as if part of ifconfig command
+
+def change_mac(interface,desiredMAC):
+	print("[+] Changing MAC address for " + interface + " to " + desiredMAC)
+
+	subprocess.call(['sudo', 'ifconfig', interface, 'down'])
+	subprocess.call(['sudo', 'ifconfig', interface, 'hw', 'ether', desiredMAC])
+	subprocess.call(['sudo', 'ifconfig', interface, 'up'])
+
+#original MAC for eth0 = 08:00:27:23:ff:90 test MAC address 00:11:22:33:44:55
+
+
 parser = optparse.OptionParser()
 
 parser.add_option("-i", "--interface" , dest="interface", help="Interface having MAC changed")
 parser.add_option("-m", "--mac", dest="desiredMAC", help="Desired MAC address")
+# python3 mac_changer.py -h
+# python3 mac_changer.py --help -> both options will bring up a help menu
 
 (options, arguments) = parser.parse_args() 
 
-interface = options.interface
-desiredMAC = options.desiredMAC
-
 #for raw user input (command line prompt)
 #interface = input("Interface = ")
-#desiredMAC = input("New MAC address = ") 	#original MAC for eth0 = 08:00:27:23:ff:90 test MAC address 00:11:22:33:44:55
-
-print("[+] Changing MAC address for " + interface + " to " + desiredMAC)
-
+#desiredMAC = input("New MAC address = ") 	
 
 # this way can be hijacked because user can input anything for interface/desiredMAC
 # example: eth0;ls;
@@ -41,9 +50,4 @@ print("[+] Changing MAC address for " + interface + " to " + desiredMAC)
 #subprocess.call('sudo ifconfig ' + interface + ' hw ether ' + desiredMAC, shell = True)
 #subprocess.call('sudo ifconfig ' + interface + ' up', shell = True)
 
-# more secure way (although ifconfig is deprecated, change to use ip command later)
-# this way if someone tries to hijack, commands will only be executed as if part of ifconfig command
-
-subprocess.call(['sudo', 'ifconfig', interface, 'down'])
-subprocess.call(['sudo', 'ifconfig', interface, 'hw', 'ether', desiredMAC])
-subprocess.call(['sudo', 'ifconfig', interface, 'up'])
+change_mac(options.interface, options.desiredMAC)
