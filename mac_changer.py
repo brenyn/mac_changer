@@ -14,6 +14,13 @@
 ##########################################################################################################
 
 import subprocess
+import optparse
+
+parser = optparse.OptionParser()
+
+parser.add_option("-i", "--interface" , dest="interface", help="Interface having MAC changed")
+
+parser.parse_args()
 
 interface = input("Interface = ")
 desiredMAC = input("New MAC address = ") 	#original MAC for eth0 = 08:00:27:23:ff:90 test MAC address 00:11:22:33:44:55
