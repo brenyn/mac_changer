@@ -10,12 +10,14 @@
 # Output(s): Changes MAC address according to user input
 #
 # Notes to self: Course uses ifconfig but this command is deprecated in 2020. Change to use ip command.
-#
+#				 Also wouldnt use sudo in subprocess call but had to because it is deprecated.
 ##########################################################################################################
 
 import subprocess
 import optparse
 import re
+
+#original MAC for eth0 = 08:00:27:23:ff:90 test MAC address 00:11:22:33:44:55
 
 def get_arguments():
 	parser = optparse.OptionParser()
@@ -40,18 +42,27 @@ def change_mac(interface,desiredMAC):
 	subprocess.call(['sudo', 'ifconfig', interface, 'hw', 'ether', desiredMAC])
 	subprocess.call(['sudo', 'ifconfig', interface, 'up'])
 
-#original MAC for eth0 = 08:00:27:23:ff:90 test MAC address 00:11:22:33:44:55
+def get_mac(interface):
+	ifconfig_result = subprocess.check_output(["sudo", "ifconfig", interface])
+
+	mac_search_result = re.search(r"\w\w:\w\w:\w\w:\w\w:\w\w:\w\w", ifconfig_result)
+
+	if (mac_search_result.group(0)):
+		return mac_search_result.group(0)
+
+	else:
+		print ("[-] Could not read MAC address")
+
 
 options = get_arguments()
 
+current_mac = get_mac(options.interface)
+print("[+] Current MAC address is " + current_mac)
+
 change_mac(options.interface, options.desiredMAC)
+current_mac = get_mac(options.interface)
 
-ifconfig_result = subprocess.check_output(["sudo", "ifconfig", options.interface])
-
-mac_search_result = re.search(r"\w\w:\w\w:\w\w:\w\w:\w\w:\w\w", ifconfig_result)
-
-if (mac_search_result.group(0) == options.desiredMAC):
-	print ("[+] MAC address for " + options.interface + " successfully changed to: " + mac_search_result.group(0))
-
+if (current_mac == options.desiredMAC):
+	print("[+] MAC address for " + options.interface + " successfully changed to: " + current_mac)
 else:
-	print ("[-] Could not change MAC address")
+	print("[-] Unable to change MAC address")
