@@ -19,11 +19,16 @@ import optparse
 parser = optparse.OptionParser()
 
 parser.add_option("-i", "--interface" , dest="interface", help="Interface having MAC changed")
+parser.add_option("-m", "--mac", dest="desiredMAC", help="Desired MAC address")
 
-parser.parse_args()
+(options, arguments) = parser.parse_args() 
 
-interface = input("Interface = ")
-desiredMAC = input("New MAC address = ") 	#original MAC for eth0 = 08:00:27:23:ff:90 test MAC address 00:11:22:33:44:55
+interface = options.interface
+desiredMAC = options.desiredMAC
+
+#for raw user input (command line prompt)
+#interface = input("Interface = ")
+#desiredMAC = input("New MAC address = ") 	#original MAC for eth0 = 08:00:27:23:ff:90 test MAC address 00:11:22:33:44:55
 
 print("[+] Changing MAC address for " + interface + " to " + desiredMAC)
 
