@@ -16,6 +16,12 @@
 import subprocess
 import optparse
 
+def get_arguments():
+	parser = optparse.OptionParser()
+	parser.add_option("-i", "--interface" , dest="interface", help="Interface having MAC changed")
+	parser.add_option("-m", "--mac", dest="desiredMAC", help="Desired MAC address")
+	return parser.parse_args()
+
 def change_mac(interface,desiredMAC):
 	print("[+] Changing MAC address for " + interface + " to " + desiredMAC)
 
@@ -25,12 +31,6 @@ def change_mac(interface,desiredMAC):
 
 #original MAC for eth0 = 08:00:27:23:ff:90 test MAC address 00:11:22:33:44:55
 
-
-parser = optparse.OptionParser()
-
-parser.add_option("-i", "--interface" , dest="interface", help="Interface having MAC changed")
-parser.add_option("-m", "--mac", dest="desiredMAC", help="Desired MAC address")
-
-(options, arguments) = parser.parse_args() 
+(options,arguments) = get_arguments()
 
 change_mac(options.interface, options.desiredMAC)
